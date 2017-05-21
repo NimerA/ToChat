@@ -1,0 +1,29 @@
+{
+  "name": "NAMETemplate",
+  "version": "0.0.1",
+  "description": "Nodejs + Angularjs + Mongodb + Expressjs Template",
+  "main": "gulpfile.js",
+  "dependencies": {},
+  "devDependencies": {
+    "angular": "~1.4.7",
+    "angular-cookies": "~1.4.7",
+    "body-parser": "^1.15.2",
+    "express": "~4.13.3",
+    "fs": "~0.0.2",
+    "gulp": "^3.9.1",
+    "gulp-sass": "^2.3.2",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^2.0.0",
+    "mongodb": "~1.4.39",
+    "mongoose": "~4.2.6",
+    "path": "~0.11.14"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jrvboesch/NAME-Template"
+  },
+  "author": "Juan Rodrigo Venegas Boesch"
+}
