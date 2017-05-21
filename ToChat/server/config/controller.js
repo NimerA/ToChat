@@ -5,55 +5,7 @@ var mongoose = require('mongoose');
 var controller = function(app) {
     var db = mongoose.connect('mongodb://localhost/userExample');
 
-    //get Example
-    app.get('/getUser/:lookup', function(req, res){
-        if(!!req.params.lookup){
-            mongoose.model(model.User.name).find({email: { $regex: '.*'+req.params.lookup+'.*', $options: 'i' }}, function(err, lookup) {
-                res.json(lookup);
-            });
-        }else{
-             res.status(404).sendFile( app.locals.root_path + '/views/404/index.html');
-        }
-    });
-
-    //Post Example
-    app.post('/createUser', function(req, res){
-         var user = new model.User.schema({
-            name:     req.body.name,
-            user:    req.body.user,
-            email:    req.body.email,
-            password: req.body.password
-        });
-        console.log(user);
-        mongoose.model(model.User.name).add(user, function(err,data){
-            if (err){
-                console.log(err);
-                res.json(err);
-            }else{
-                res.json(data);
-            }
-        });
-    });
-
-    //update teams by name
-    app.post('/updateUser', function(req, res){
-        mongoose.model(model.User.name).find({email: { $regex: req.body.email, $options: 'i' }}, function(err, user){
-            if (err){
-                console.log(err);
-                res.json(err);
-            }else{
-
-                user.save(function (err, data) {
-                if (err){ 
-                    console.log(err);
-                    res.json(err);
-                }else 
-                    res.json(data);
-                    console.log('Saved : ', data );
-                });
-            }
-        });
-    });
+    require('./users')(app, model.Users.schema);
 
 };
 

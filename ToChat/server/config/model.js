@@ -1,26 +1,22 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-	//Model father
+    //Model father
+    var model={};
 
     //Users Schema Example
-var User = new Schema({
-    name:     String,
-    user:    String,
-    email:    String,
-    password: String
-});
+    Users = Schema({
+        name:     String,
+        user:    String,
+        email:    String,
+        password: String
+    });
 
-/*model.User ={
-    'schema': mongoose.model('user', User),
-    'name': 'user'
-};*/
-User.save(function(err)){
-    if (err) throw err;
+    model.Users ={
+        'schema': mongoose.model('users', Users),
+        'name': 'users'
+    };
 
-    console.log('Man funciono!')
-}
-//var user = mongoose.model('User', User)
+    // Exports all Schemas
+module.exports = model;
 
-// Exports all Schemas
-//module.exports = user;
-    
+
