@@ -11,15 +11,19 @@ var app = angular.module('myApp', [
   'ngMaterial',
   'ui.router',
   'lbServices',
-  'btford.socket-io',   
+  'btford.socket-io', 
+  //VIEWS 
   'myApp.view1',
-  'myApp.view2'
+  'myApp.view2',
+  'myApp.login',
+  'myApp.register'
 ]);
 
 app.config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
   $locationProvider.hashPrefix('!');
-  $routeProvider.otherwise({redirectTo: '/view1'});
+  $routeProvider.otherwise({redirectTo: '/login'});
 }]);
+
 
 app.controller('appController', ['$scope', function($scope) {
   console.log("hello");

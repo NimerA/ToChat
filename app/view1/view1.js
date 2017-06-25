@@ -2,6 +2,14 @@
 
 angular.module('myApp.view1', ['ngRoute'])
 
+.factory('socket', function (socketFactory) {
+  var myIoSocket = io.connect('localhost:3002');
+  var socket = socketFactory({
+    ioSocket: myIoSocket
+  });
+  return socket;
+})
+
 .config(['$routeProvider', function($routeProvider) {
   
   $routeProvider.when('/view1', {
@@ -10,6 +18,7 @@ angular.module('myApp.view1', ['ngRoute'])
   });
 }])
 
-.controller('View1Ctrl', [function() {
+.controller('View1Ctrl', ['socket', function(socket) {
   console.log("Cont1");
 }]);
+

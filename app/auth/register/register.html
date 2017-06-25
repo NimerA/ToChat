@@ -1,0 +1,54 @@
+<div ng-controller="registerCtrl">
+    <h3>Create an account</h3>
+
+    <form name="registerForm" novalidate>
+        <md-input-container class="md-block" md-no-float>
+            <input name="username" ng-model="vm.form.username" placeholder="Name" required>
+            <div ng-messages="registerForm.username.$error" role="alert">
+                <div ng-message="required">
+                    <span>Username field is required</span>
+                </div>
+            </div>
+        </md-input-container>
+
+        <md-input-container class="md-block" md-no-float>
+            <input type="email" name="email" ng-model="vm.form.email" placeholder="Email"
+                    ng-pattern="/^.+@.+\..+$/" required>
+            <div ng-messages="registerForm.email.$error" role="alert" multiple>
+                <div ng-message="required">
+                    <span >Email field is required</span>
+                </div>
+                <div ng-message="pattern">
+                    <span >Email must be a valid e-mail address</span>
+                </div>
+            </div>
+        </md-input-container>
+
+        <md-input-container class="md-block" md-no-float>
+            <input type="password" name="password" ng-model="vm.form.password" placeholder="Password"
+                    ng-pattern="/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9]{8,}/" required>
+            <div ng-messages="registerForm.password.$error" role="alert" multiple>
+                <div ng-message="required">
+                    <span >Password field is required</span>
+                </div>
+                <div ng-message="pattern">
+                    <span >
+                        Must be at least 8 chafacters long. 
+                        Must have at least one number. 
+                        Must have at least one uppercase letter.
+                        ಠ_ಠ
+                    </span>
+                </div>
+            </div>
+        </md-input-container>
+
+        <md-button type="submit" class="md-raised md-accent submit-button" aria-label="CREATE MY ACCOUNT"
+                    ng-disabled="registerForm.$invalid || registerForm.$pristine"
+                    ng-click="vm.register()">
+            CREATE MY ACCOUNT
+        </md-button>
+    </form>
+
+    <md-button  ng-href="#!/login" class="md-raised md-accent submit-button" aria-label="LOGIN" >GO BACK</md-button>
+
+</div>

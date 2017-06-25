@@ -1,0 +1,42 @@
+
+<div ng-controller="loginCtrl">
+    <h3>Log in to your account</h3>
+    <form name="loginForm" novalidate>
+        <md-input-container class="md-block" md-no-float>
+
+            
+            <input type="email" name="email" ng-model="vm.user.email" placeholder="Email"
+                    ng-pattern="/^.+@.+\..+$/" required>
+            <div ng-messages="loginForm.email.$error" role="alert" multiple>
+                <div ng-message="required">
+                    <span >Email field is required</span>
+                </div>
+                <div ng-message="pattern">
+                    <span >Email must be a valid e-mail address</span>
+                </div>
+            </div>
+        </md-input-container>
+
+        <md-input-container class="md-block" md-no-float>
+            <input type="password" name="password" ng-model="vm.user.password" placeholder="Password" required>
+            <div ng-messages="loginForm.password.$error" role="alert">
+                <div ng-message="required">
+                    <span>Password field is required</span>
+                </div>
+            </div>
+        </md-input-container>
+
+        <md-button type="submit" class="md-raised md-accent submit-button" aria-label="LOG IN" 
+        ng-disabled="loginForm.$invalid || loginForm.$pristine" ng-click="vm.login()" >LOG IN
+        </md-button>
+    </form>
+
+    <md-button  ng-href="#!/register" class="md-raised md-accent submit-button" aria-label="REGISTER" >REGISTER</md-button>
+    <div>
+        <span ng-show="vm.error" ng-cloak >Wrong Password or Email (╯°□°）╯︵ ┻━┻ </span>
+    </div>
+    
+</div>
+
+
+
