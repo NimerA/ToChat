@@ -15,7 +15,8 @@
     "socket.io-client": "^2.0.3",
     "angular-material": "^1.1.4",
     "angular-ui-router": "^1.0.4",
-    "angular-resource": "^1.6.4"
+    "angular-resource": "^1.6.4",
+    "angular-right-click": "^0.1.1"
   },
   "overrides": {
     "html5-boilerplate": {

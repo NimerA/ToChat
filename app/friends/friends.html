@@ -1,0 +1,22 @@
+<div ng-cloak>
+
+    <md-toolbar layout="row" class="md-hue-3">
+      <div class="md-toolbar-tools">
+        <span>Friends</span>
+      </div>
+    </md-toolbar>
+
+    <md-content layout="row">
+      <md-list flex>
+        <md-list-item class="md-3-line" ng-repeat="item in vm.friends">
+          <img ng-src="{{vm.urlBase}}/containers/files/download/{{item.avatar}}" class="md-avatar" alt="{{item.username}}" />
+          <div class="md-list-item-text" layout="column">
+            <h3>{{ item.username }}</h3>
+            <h4>{{ item.mood }}</h4>
+            <p>{{ item.status }}</p>
+          </div>
+        </md-list-item>
+      </md-list>
+    </md-content>
+  </div>
+</div>

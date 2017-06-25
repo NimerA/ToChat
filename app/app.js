@@ -2,6 +2,7 @@
 
 // Declare app level module which depends on views, and components
 var app = angular.module('myApp', [
+  'ngRightClick',
   'ngRoute',
   'ngResource',
   'ngAnimate',
@@ -11,12 +12,13 @@ var app = angular.module('myApp', [
   'ngMaterial',
   'ui.router',
   'lbServices',
-  'btford.socket-io', 
+  'btford.socket-io',
   //VIEWS 
   'myApp.view1',
   'myApp.view2',
   'myApp.login',
-  'myApp.register'
+  'myApp.register',
+  'myApp.friends'
 ]);
 
 app.config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
