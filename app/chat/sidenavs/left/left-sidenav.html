@@ -1,0 +1,20 @@
+<!-- CONTACTS VIEW -->
+<div ng-show="vm.leftSidenavView === 'contacts'"
+     ng-include="'chat/sidenavs/left/views/contacts/contacts-view.html'" 
+     layout="column" flex>
+</div>
+<!-- / CONTACTS VIEW -->
+
+<!-- FRIEND VIEW -->
+<div ng-show="vm.leftSidenavView ==='friends'"
+     ng-include="'chat/sidenavs/left/views/friends/friends-view.html'"
+     layout="column" flex>
+</div>
+<!-- FRIEND VIEW -->
+
+<!-- CHAT VIEW -->
+<div ng-hide="vm.leftSidenavView" class="view chats-view animate-slide-right"
+     ng-include="'chat/sidenavs/left/views/chats/chats-view.html'"
+     layout="column" flex>
+</div>
+<!-- CHAT VIEW -->

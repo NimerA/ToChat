@@ -18,7 +18,8 @@ var app = angular.module('myApp', [
   'myApp.view2',
   'myApp.login',
   'myApp.register',
-  'myApp.friends'
+  'myApp.friends',
+  'myApp.chat'
 ]);
 
 app.config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
