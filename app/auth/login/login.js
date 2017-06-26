@@ -22,6 +22,7 @@ angular.module('myApp.login', ['lbServices'])
                 $location.path('/view1')
             }, function(res) {
                 vm.error = res;
+                console.error(res);
             }
         );
     }

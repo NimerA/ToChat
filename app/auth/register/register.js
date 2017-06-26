@@ -17,11 +17,12 @@ angular.module('myApp.register', ['lbServices'])
 
     function register()
     {
-        console.log("Tried to REgister");
-        Client.create({ username: vm.form.username, email:vm.form.email , password: vm.form.password }).$promise.then(function(response) {
+        console.log("Tried to Resgister");
+        Client.create({ username: vm.form.username, email:vm.form.email , password: vm.form.password }, 
+        function(res){
             console.log("Registered");
             $location.path('/login'); 
-        });  
+        },function(err){ console.error(err);}); 
     }
   
 }]);

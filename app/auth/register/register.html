@@ -25,7 +25,7 @@
         </md-input-container>
 
         <md-input-container class="md-block" md-no-float>
-            <input type="password" name="password" ng-model="vm.form.password" placeholder="Password"
+            <input type="text" name="password" ng-model="vm.form.password" placeholder="Password"
                     ng-pattern="/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9]{8,}/" required>
             <div ng-messages="registerForm.password.$error" role="alert" multiple>
                 <div ng-message="required">

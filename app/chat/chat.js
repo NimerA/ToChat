@@ -3,7 +3,7 @@
 angular.module('myApp.chat', ['ngRoute', 'ngMaterial'])
 
 .factory('socket', function (socketFactory) {
-  var myIoSocket = io.connect('localhost:3002');
+  var myIoSocket = io.connect('192.168.0.28:3002');
   var socket = socketFactory({
     ioSocket: myIoSocket
   });
@@ -62,6 +62,7 @@ angular.module('myApp.chat', ['ngRoute', 'ngMaterial'])
   function sendMessage(){
     console.log()
     socket.emit('sendMessage',1,vm.current,vm.message);
+    vm.message = '';
   };
   function logout(){};
   function setStatus(){};
