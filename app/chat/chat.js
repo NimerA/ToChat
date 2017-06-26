@@ -30,10 +30,12 @@ angular.module('myApp.chat', ['ngRoute', 'ngMaterial'])
   var vm = this;
   vm.current = Client.getCurrent();
   vm.leftSidenavView = false;
-  vm.leftSidenavView = 'friends';
   vm.setSideView = setSideView;
   vm.urlBase =  LoopBackResource.getUrlBase();
   vm.messages = [];
+
+  vm.upload = false;
+  vm.download = downloadAttachment;
 
   socket.on('message', function(msg){
     console.log('socket.message', msg);
@@ -44,6 +46,7 @@ angular.module('myApp.chat', ['ngRoute', 'ngMaterial'])
   console.log(vm.current);
 
   vm.sendMessage = sendMessage;
+
   Client.find().$promise.then(function(answer) {
     vm.friends = answer; 
   });
@@ -60,15 +63,64 @@ angular.module('myApp.chat', ['ngRoute', 'ngMaterial'])
   function getAllFriend(){};
 
   function sendMessage(){
-    console.log()
-    socket.emit('sendMessage',1,vm.current,vm.message);
-    vm.message = '';
+
+    if( vm.upload ){
+      var file = vm.myFile;
+      var reg = /^image\/[a-z]*$/;
+      var regex = new RegExp(reg);
+
+      console.log("Sending Message");
+      
+      var fd = new FormData();
+      fd.append('file', file);
+      
+      $http.post(vm.urlBase + "/containers/files/upload", fd, {
+          transformRequest: angular.identity,
+          headers: {'Content-Type': undefined}
+      })
+      .success(function( data ){
+          var image = data.result.files.file[0]; //base file :v 
+          // Message
+          var message = {
+              who    : 'user',
+              message: vm.urlBase + "/containers/files/download/" + image.name,
+              time   : new Date().toISOString(),
+              isAttachment : true,
+              isImage: regex.test(image.type)
+          };
+
+          // Add the message to the chat
+          socket.emit('sendMessage',1,vm.current,message);
+          // Update Contact's lastMessage
+          //vm.contacts.getById(vm.chatContactId).lastMessage = message;
+
+          // Reset the reply textarea
+          vm.message = '';
+
+      })
+      .error(function( err ){
+          console.log(err);
+      });
+      
+      }else{
+
+        console.log()
+        socket.emit('sendMessage',1,vm.current,vm.message);
+        vm.message = '';
+      }
   };
+
+
+  function downloadAttachment( url ) {
+            // console.log(url);
+            return url;
+  }
+
   function logout(){};
   function setStatus(){};
 
   function setSideView(view){
-    vm.leftSidenavView = "friends";
+    vm.leftSidenavView = view;
   }
 
 }]);

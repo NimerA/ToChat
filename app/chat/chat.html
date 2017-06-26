@@ -1,42 +1,56 @@
 <div layout="row">
-  <div flex="30">
-    <div ng-include="'chat/sidenavs/left/left-sidenav.html'"> </div>
-  </div>
-  <div flex="70">
-    <div layout="column">
-      <div flex="90">
-        <div layout="column" layout-fill>
-          <md-toolbar>
-            <div class="md-toolbar-tools">
-              <h2 md-truncate flex></h2>
-              <md-button>
-                Logout
-              </md-button>
-            </div>
-          </md-toolbar>
-          <md-content>
-            <md-list flex>
-              <md-list-item ng-repeat="item in vm.messages" ng-click="ctrl.openMenu($mdOpenMenu, $event)">
-                  <h3>{{ item.user.username}} : {{ item.text}}</h3>
-              </md-list-item>
-            </md-list>
-          </md-content>
-        </div>
-      </div>
-      <div flex="10">
-        <md-content layout-padding>
-          <form name="messageForm" layout="row">
-            <md-input-container class="md-block" flex="90">
-              <input type="text" name="Message" ng-model="vm.message" placeholder="Message" required>
-            </md-input-container>
-            <md-input-container  flex="10" >
-              <md-button type="submit" class="md-raised md-accent submit-button" aria-label="Send" ng-disabled="messageForm.$invalid || messageForm.$pristine"
-                ng-click="vm.sendMessage()">Send
-              </md-button>
-            </md-input-container>
-          </form>
-        </md-content>
-      </div>
+    <div flex="30" style="border-right-style:solid; border-right: thick double #eee; height:auto; overflow:auto;">
+        <md-tabs md-stretch-tabs md-selected="selectedIndex" class="md-primary md-hue-1 style">
+            <md-tab ng-click="vm.setSideView('contacts')" label="Online"></md-tab>
+            <md-tab ng-click="vm.setSideView('friends')" label="Friends"></md-tab>
+            <md-tab ng-click="vm.setSideView('chats')" label="Chats"></md-tab>
+        </md-tabs>
+        <div ng-include="'chat/sidenavs/left/left-sidenav.html'"> </div>
     </div>
-  </div>
+    <div flex="70">
+        <div layout="column">
+            <div flex="90">
+                <div layout="column" layout-fill>
+                    <md-toolbar>
+                        <div class="md-toolbar-tools">
+                            <h2 md-truncate flex></h2>
+                            <md-button ng-click="vm.upload=true">
+                                Attach
+                            </md-button>
+                            <md-button>
+                                Logout
+                            </md-button>
+                        </div>
+                    </md-toolbar>
+                    <md-content>
+                        <md-list flex>
+                            <md-list-item ng-repeat="item in vm.messages" ng-click="ctrl.openMenu($mdOpenMenu, $event)">
+                                <h3>{{ item.user.username}} : {{ item.text}}</h3>
+                            </md-list-item>
+                        </md-list>
+                    </md-content>
+                </div>
+            </div>
+            <div flex="10">
+                <md-content layout-padding>
+                    <form name="messageForm" layout="row">
+                        <md-input-container flex md-no-float ng-if="vm.upload">
+                            <input type="file" file-model="vm.myFile" placeholder="Message" required/>
+                            <md-input-container flex="10">
+                                <md-button class="md-raised md-accent submit-button" ng-click="vm.upload=false">Cancle
+                                </md-button>
+                            </md-input-container>
+                        </md-input-container>
+                        <md-input-container class="md-block" flex="90" ng-if="!vm.upload">
+                            <input type="text" name="Message" ng-model="vm.message" placeholder="Message" required>
+                        </md-input-container>
+                        <md-input-container flex="10">
+                            <md-button type="submit" class="md-raised md-accent submit-button" aria-label="Send" ng-click="vm.sendMessage()">Send
+                            </md-button>
+                        </md-input-container>
+                    </form>
+                </md-content>
+            </div>
+        </div>
+    </div>
 </div>
