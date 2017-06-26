@@ -14,6 +14,7 @@ var app = angular.module('myApp', [
   'lbServices',
   'btford.socket-io',
   'ngFileUpload',
+  //'datatables',
   //VIEWS 
   'myApp.login',
   'myApp.register',

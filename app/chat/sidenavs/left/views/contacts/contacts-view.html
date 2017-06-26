@@ -1,16 +1,44 @@
 <div ng-cloak>
-    <md-content layout="row">
-      <md-list flex>
-        <md-list-item class="md-3-line" ng-repeat="item in vm.friends" ng-click="ctrl.openMenu($mdOpenMenu, $event)">          
-          <img ng-src="{{vm.urlBase}}/containers/files/download/{{item.avatar}}" class="md-avatar" alt="{{item.username}}" />
-          <div class="md-list-item-text" layout="column">
-            <h3>{{ item.username }}</h3>
-            <h4>{{ item.mood }}</h4>
-            <p>{{ item.status }}</p>
+  <md-content layout="row">
+    <md-list flex>
+      <md-list-item class="md-3-line" ng-repeat="item in vm.contacts" ng-click="ctrl.openMenu($mdOpenMenu, $event)">
+        <div layout="row" layout-fill>
+          <div flex ="66" layout="row">
+            <img ng-src="{{vm.urlBase}}/containers/files/download/{{item.avatar}}" class="md-avatar" alt="{{item.username}}" />
+            <div class="md-list-item-text" layout="column">
+              <h3>{{ item.username }}</h3>
+              <h4>{{ item.mood }}</h4>
+              <p>{{ item.status }}</p>
+            </div>
           </div>
-        </md-list-item>
-      </md-list>
-    </md-content>
-  </div>
+          <div flex>
+            <md-menu>
+              <md-button ng-click="vm.openMenu($mdMenu, $event)">
+                Options
+              </md-button>
+              <md-menu-content width="4">
+                <md-menu-item>
+                  <md-button ng-click="ctrl.redial($event)">
+                    Iniciar Chat
+                  </md-button>
+                </md-menu-item>
+                <md-menu-item>
+                  <md-button ng-click="ctrl.checkVoicemail()">
+                    Ver Perfil
+                  </md-button>
+                </md-menu-item>
+                <md-menu-divider></md-menu-divider>
+                <md-menu-item>
+                  <md-button ng-click="ctrl.toggleNotifications()">
+                    Agregar Amigo
+                  </md-button>
+                </md-menu-item>
+              </md-menu-content>
+            </md-menu>
+          </div>
+        </div>
+      </md-list-item>
+    </md-list>
+  </md-content>
 </div>
-   
+</div>

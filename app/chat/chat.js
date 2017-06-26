@@ -9,10 +9,6 @@ angular.module('myApp.chat', ['ngRoute', 'ngMaterial'])
     });
     return socket;
   })
-
-
-
-
   .config(['$routeProvider', function ($routeProvider) {
 
     $routeProvider.when('/chat', {
@@ -21,10 +17,11 @@ angular.module('myApp.chat', ['ngRoute', 'ngMaterial'])
     });
   }])
 
-  .controller('ChatCtrl', ['$scope', '$mdSidenav', 'Client', 'LoopBackResource', 'socket', '$http', 'Chatroom', 'Message',
-    function ($scope, $mdSidenav, Client, LoopBackResource, socket, $http, Chatroom, Message) {
+  .controller('ChatCtrl', ['$scope', '$mdSidenav', 'Client', 'LoopBackResource', 'socket', '$http', 'Chatroom', 'Message', '$location',
+    function ($scope, $mdSidenav, Client, LoopBackResource, socket, $http, Chatroom, Message, $location) {
 
       var vm = this;
+      var originatorEv;
 
       //******** INIT *********
       vm.leftSidenavView = 'chats';
@@ -35,6 +32,8 @@ angular.module('myApp.chat', ['ngRoute', 'ngMaterial'])
       vm.sendMessage = sendMessage;
       vm.upload = upload;
       vm.getChat = getChat;
+      vm.openMenu = openMenu;
+      vm.logout = logout;
 
       // ******* DATA **********
       vm.urlBase = LoopBackResource.getUrlBase(); //Gets the host address
@@ -60,8 +59,15 @@ angular.module('myApp.chat', ['ngRoute', 'ngMaterial'])
         console.error(err);
       });
 
-      getAllClients(); //Get All Clients
-      getAllFriends(); //Get All Friends
+      Client.find({
+        filter: {
+          where: {
+            "status": "online"
+          }
+        }
+      }).$promise.then(function (answer) {
+        vm.contacts = answer;
+      });
 
 
       function getChat(id) {
@@ -146,12 +152,6 @@ angular.module('myApp.chat', ['ngRoute', 'ngMaterial'])
 
       }
 
-      //Return all The Current Registered members
-      function getAllClients() {
-        Client.find().$promise.then(function (answer) {
-          vm.friends = answer;
-        });
-      }
 
 
       //return all the friends of the current user
@@ -188,14 +188,25 @@ angular.module('myApp.chat', ['ngRoute', 'ngMaterial'])
       }
 
       function logout() {
-        //Chnage user Status to offline
-        //Logout the current user
-      };
+        Client.updateAttributes({id: vm.current.id },{status: "offline"},
+          function (res) {
+              Client.logout();
+              $location.path('/login');
+          },
+          function (err) {
+            console.error(err);
+          })
+      }
 
       //Chnages the content of the Partial view
       function setSideView(view) {
         vm.leftSidenavView = view;
       }
+
+      function openMenu($mdMenu, ev) {
+        originatorEv = ev;
+        $mdMenu.open(ev);
+      };
 
     }
   ]);
