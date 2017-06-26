@@ -1,6 +1,6 @@
 <div layout="row">
     <div flex="30" style="border-right-style:solid; border-right: thick double #eee; height:auto; overflow:auto;">
-        <md-tabs md-stretch-tabs md-selected="selectedIndex" class="md-primary md-hue-1 style">
+        <md-tabs md-stretch-tabs md-selected="selectedIndex" class="md-primary light-green style">
             <md-tab ng-click="vm.setSideView('contacts')" label="Online"></md-tab>
             <md-tab ng-click="vm.setSideView('friends')" label="Friends"></md-tab>
             <md-tab ng-click="vm.setSideView('chats')" label="Chats"></md-tab>
@@ -9,13 +9,13 @@
     </div>
     <div flex="70">
         <div layout="column">
-            <div flex="90">
+            <div flex="90" layout="column" layout-fill>
                 <div layout="column" layout-fill>
                     <md-toolbar>
                         <div class="md-toolbar-tools">
                             <h2 md-truncate flex></h2>
-                            <md-button ng-click="vm.upload=true">
-                                Attach
+                            <md-button ngf-select='vm.upload($files, $file, $event)' type='file'>
+                                Upload
                             </md-button>
                             <md-button>
                                 Logout
@@ -24,8 +24,20 @@
                     </md-toolbar>
                     <md-content>
                         <md-list flex>
-                            <md-list-item ng-repeat="item in vm.messages" ng-click="ctrl.openMenu($mdOpenMenu, $event)">
-                                <h3>{{ item.user.username}} : {{ item.text}}</h3>
+                            <md-list-item ng-repeat="item in vm.messages">
+                                <div layout="column">
+                                    <div flex>
+                                        <h3>{{ item.client.username}} : {{ item.text}}</h3>
+                                    </div>
+                                    <div flex layout="column">
+                                        <div flex>
+                                            <img ng-if="item.media_type" ng-src="{{vm.urlBase}}/containers/files/download/{{item.media_name}}" height="300" width="300">
+                                        </div>
+                                        <div flex>
+                                            <a ng-if="item.media_name" href="{{vm.urlBase}}/containers/files/download/{{item.media_name}}">Download</a>
+                                        </div>
+                                    </div>
+                                </div>
                             </md-list-item>
                         </md-list>
                     </md-content>
@@ -34,18 +46,12 @@
             <div flex="10">
                 <md-content layout-padding>
                     <form name="messageForm" layout="row">
-                        <md-input-container flex md-no-float ng-if="vm.upload">
-                            <input type="file" file-model="vm.myFile" placeholder="Message" required/>
-                            <md-input-container flex="10">
-                                <md-button class="md-raised md-accent submit-button" ng-click="vm.upload=false">Cancle
-                                </md-button>
-                            </md-input-container>
-                        </md-input-container>
-                        <md-input-container class="md-block" flex="90" ng-if="!vm.upload">
+                        <md-input-container class="md-block" flex="90">
                             <input type="text" name="Message" ng-model="vm.message" placeholder="Message" required>
                         </md-input-container>
                         <md-input-container flex="10">
-                            <md-button type="submit" class="md-raised md-accent submit-button" aria-label="Send" ng-click="vm.sendMessage()">Send
+                            <md-button type="submit" class="md-raised md-accent submit-button" aria-label="Send" ng-disabled="messageForm.$invalid || messageForm.$pristine"
+                                ng-click="vm.sendMessage()">Send
                             </md-button>
                         </md-input-container>
                     </form>

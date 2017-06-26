@@ -2,125 +2,200 @@
 
 angular.module('myApp.chat', ['ngRoute', 'ngMaterial'])
 
-.factory('socket', function (socketFactory) {
-  var myIoSocket = io.connect('192.168.0.28:3002');
-  var socket = socketFactory({
-    ioSocket: myIoSocket
-  });
-  return socket;
-})
-
-
-.config(['$routeProvider',function($routeProvider) {
-  
-  $routeProvider.when('/chat', {
-    templateUrl: 'chat/chat.html',
-    controller: 'ChatCtrl as vm',
-    resolve: {
-      currentUser: function (Client) {
-        return Client.getCurrent();
-      }
-    }
-  });
-}])
-
-.controller('ChatCtrl', ['$scope','$mdSidenav','Client','LoopBackResource', 'socket',
-  function($scope , $mdSidenav, Client, LoopBackResource, socket, currentUser) {
-
-  var vm = this;
-  vm.current = Client.getCurrent();
-  vm.leftSidenavView = false;
-  vm.setSideView = setSideView;
-  vm.urlBase =  LoopBackResource.getUrlBase();
-  vm.messages = [];
-
-  vm.upload = false;
-  vm.download = downloadAttachment;
-
-  socket.on('message', function(msg){
-    console.log('socket.message', msg);
-    vm.messages.push(msg);
-  });
-  
-
-  console.log(vm.current);
-
-  vm.sendMessage = sendMessage;
-
-  Client.find().$promise.then(function(answer) {
-    vm.friends = answer; 
-  });
+  .factory('socket', function (socketFactory) {
+    var myIoSocket = io.connect('192.168.0.28:3002');
+    var socket = socketFactory({
+      ioSocket: myIoSocket
+    });
+    return socket;
+  })
 
 
 
-  socket.emit('join', 1,vm.current);
 
-  function getChat(){};
-  function getChatUsers(){};
-  function getChatMessages(){};
+  .config(['$routeProvider', function ($routeProvider) {
 
-  function getAllClients(){};
-  function getAllFriend(){};
+    $routeProvider.when('/chat', {
+      templateUrl: 'chat/chat.html',
+      controller: 'ChatCtrl as vm'
+    });
+  }])
 
-  function sendMessage(){
+  .controller('ChatCtrl', ['$scope', '$mdSidenav', 'Client', 'LoopBackResource', 'socket', '$http', 'Chatroom', 'Message',
+    function ($scope, $mdSidenav, Client, LoopBackResource, socket, $http, Chatroom, Message) {
 
-    if( vm.upload ){
-      var file = vm.myFile;
-      var reg = /^image\/[a-z]*$/;
-      var regex = new RegExp(reg);
+      var vm = this;
 
-      console.log("Sending Message");
-      
-      var fd = new FormData();
-      fd.append('file', file);
-      
-      $http.post(vm.urlBase + "/containers/files/upload", fd, {
-          transformRequest: angular.identity,
-          headers: {'Content-Type': undefined}
-      })
-      .success(function( data ){
-          var image = data.result.files.file[0]; //base file :v 
-          // Message
-          var message = {
-              who    : 'user',
-              message: vm.urlBase + "/containers/files/download/" + image.name,
-              time   : new Date().toISOString(),
-              isAttachment : true,
-              isImage: regex.test(image.type)
-          };
+      //******** INIT *********
+      vm.leftSidenavView = 'chats';
+      vm.currentChat = 0;
 
-          // Add the message to the chat
-          socket.emit('sendMessage',1,vm.current,message);
-          // Update Contact's lastMessage
-          //vm.contacts.getById(vm.chatContactId).lastMessage = message;
+      // ****** METHODS *******
+      vm.setSideView = setSideView;
+      vm.sendMessage = sendMessage;
+      vm.upload = upload;
+      vm.getChat = getChat;
 
-          // Reset the reply textarea
-          vm.message = '';
-
-      })
-      .error(function( err ){
-          console.log(err);
+      // ******* DATA **********
+      vm.urlBase = LoopBackResource.getUrlBase(); //Gets the host address
+      Client.getCurrent(null, function (res) {
+        vm.current = res;
+        Chatroom.find({
+          "filter": {
+            include: {
+              relation: "client",
+              scope: {
+                where: {
+                  "Client_id": res.id
+                }
+              }
+            }
+          }
+        }, function (res) {
+          vm.chats = res;
+        }, function (err) {
+          console.error(err);
+        });
+      }, function (err) {
+        console.error(err);
       });
-      
-      }else{
 
-        console.log()
-        socket.emit('sendMessage',1,vm.current,vm.message);
-        vm.message = '';
+      getAllClients(); //Get All Clients
+      getAllFriends(); //Get All Friends
+
+
+      function getChat(id) {
+        //Get All Participants
+        vm.currentChat = id;
+        //Get All Messages
+        Chatroom.find({
+          "filter": {
+            where: {
+              id: id
+            },
+            include: {
+              relation: "messages",
+              scope: {
+                include: {
+                  relation: "client"
+                }
+              }
+            }
+          }
+        }, function (res) {
+          //Load Chat to View
+          vm.messages = res[0].messages;
+          socket.emit('join', id, vm.current);
+        }, function (err) {
+          console.error(err);
+        });
       }
-  };
 
 
-  function downloadAttachment( url ) {
-            // console.log(url);
-            return url;
-  }
+      /* Listen for Incoming Messages */
+      socket.on('message', function (msg) {
+        vm.messages.push(msg.message);
+      });
 
-  function logout(){};
-  function setStatus(){};
 
-  function setSideView(view){
-    vm.leftSidenavView = view;
-  }
+      //Uploads a value to server api, returns if sucessful or not
+      function upload(files, file, event) {
+        if (!vm.currentChat == 0) {
+          var fd = new FormData();
+          fd.append('file', file);
+          var reg = /^image\/[a-z]*$/;
+          var regex = new RegExp(reg);
+          $http.post(vm.urlBase + "/containers/files/upload", fd, {
+            transformRequest: angular.identity,
+            headers: {
+              'Content-Type': undefined
+            }
+          }).then(function successCallback(res) {
+            //Build Message
+            var message = {
+              client: vm.current,
+              text: "Uploaded " + file.name,
+              time: new Date().toISOString(),
+              media_url: "string",
+              media_name: file.name,
+              media_type: regex.test(file.type),
+              media_size: file.size,
+              clientId: vm.current.id,
+              chatroomId: vm.currentChat
+            }
+            //save Message
+            Message.create(message,
+              function (res) {
+                //Emit Message
+                socket.emit('sendMessage', vm.currentChat, vm.current, message);
+              },
+              function (err) {
+                console.error(err);
+              });
 
-}]);
+          }, function errorCallback(err) {
+            console.error(err);
+          });
+        } else {
+          console.log("Join a Chat First");
+        }
+      }
+
+      //Return all the members of the chat
+      function getChatUsers(ChatID, cb) {
+
+      }
+
+      //Return all The Current Registered members
+      function getAllClients() {
+        Client.find().$promise.then(function (answer) {
+          vm.friends = answer;
+        });
+      }
+
+
+      //return all the friends of the current user
+      function getAllFriends(UserId, cb) {
+
+      }
+
+      function sendMessage() {
+        if (!vm.currentChat == 0) {
+          //Build The Message
+          var message = {
+            client: vm.current,
+            text: vm.message,
+            time: new Date().toISOString(),
+            clientId: vm.current.id,
+            chatroomId: vm.currentChat
+          }
+          //SAVE MESSAGE
+          Message.create(message,
+            function (res) {
+              //Notify other usera about message
+              socket.emit('sendMessage', vm.currentChat, vm.current, message);
+              //Clear the Input
+              vm.message = '';
+            },
+            function (err) {
+              console.error(err);
+            });
+
+        } else {
+          console.log("Join a Chat First");
+          vm.message = '';
+        }
+      }
+
+      function logout() {
+        //Chnage user Status to offline
+        //Logout the current user
+      };
+
+      //Chnages the content of the Partial view
+      function setSideView(view) {
+        vm.leftSidenavView = view;
+      }
+
+    }
+  ]);

@@ -19,7 +19,7 @@ angular.module('myApp.login', ['lbServices'])
     {
         Client.login({email: vm.user.email,password: vm.user.password},
             function() {
-                $location.path('/view1')
+                $location.path('/chat')
             }, function(res) {
                 vm.error = res;
                 console.error(res);

@@ -13,12 +13,10 @@ var app = angular.module('myApp', [
   'ui.router',
   'lbServices',
   'btford.socket-io',
+  'ngFileUpload',
   //VIEWS 
-  'myApp.view1',
-  'myApp.view2',
   'myApp.login',
   'myApp.register',
-  'myApp.friends',
   'myApp.chat'
 ]);
 

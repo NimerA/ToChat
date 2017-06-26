@@ -1,4 +1,15 @@
-<h3>
-    <span>CHATS</span>
-</h3>
+<div ng-cloak>
+    <md-content layout="row">
+      <md-list flex>
+        <md-list-item class="md-3-line" ng-repeat="item in vm.chats" ng-click="vm.getChat(item.id)">
+          <div class="md-list-item-text" layout="column">
+            <h3>{{ item.name }}</h3>
+            <h4>{{ item.client.username }}</h4>
+            <p>{{ item.type ? "Private" : "Public" }}</p>
+          </div>
+        </md-list-item>
+      </md-list>
+    </md-content>
+  </div>
+</div>
    
