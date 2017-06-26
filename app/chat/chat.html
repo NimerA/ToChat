@@ -1,5 +1,5 @@
 <div layout="row">
-    <div flex="30" style="border-right-style:solid; border-right: thick double #eee; height:auto; overflow:auto;">
+    <div flex="20" style="border-right-style:solid; border-right: thick double #eee; height:auto; overflow:auto;">
         <md-tabs md-stretch-tabs md-selected="selectedIndex" class="md-primary light-green style">
             <md-tab ng-click="vm.setSideView('contacts')" label="Online"></md-tab>
             <md-tab ng-click="vm.setSideView('friends')" label="Friends"></md-tab>
@@ -7,13 +7,22 @@
         </md-tabs>
         <div ng-include="'chat/sidenavs/left/left-sidenav.html'"> </div>
     </div>
-    <div flex="70">
+    <div flex="60">
         <div layout="column">
             <div flex="90" layout="column" layout-fill>
                 <div layout="column" layout-fill>
                     <md-toolbar>
                         <div class="md-toolbar-tools">
                             <h2 md-truncate flex></h2>
+                            <form name="chatForm" layout="row">
+                                <md-input-container class="md-block" md-no-float>
+                                    <input type="text" ng-model="vm.userchat" placeholder="Chat Name">
+                                </md-input-container>
+                                <md-button type="submit" ng-click='vm.createChat()'>
+                                    Crear Chat
+                                </md-button>
+                            </form>
+
                             <md-button ngf-select='vm.upload($files, $file, $event)' type='file'>
                                 Upload
                             </md-button>
@@ -58,5 +67,8 @@
                 </md-content>
             </div>
         </div>
+    </div>
+    <div flex="20">
+        <div ng-include="'chat/sidenavs/right/right-sidenav.html'"> </div>
     </div>
 </div>

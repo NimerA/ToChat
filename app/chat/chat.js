@@ -3,7 +3,7 @@
 angular.module('myApp.chat', ['ngRoute', 'ngMaterial'])
 
   .factory('socket', function (socketFactory) {
-    var myIoSocket = io.connect('192.168.0.28:3002');
+    var myIoSocket = io.connect('172.16.172.224:3002');
     var socket = socketFactory({
       ioSocket: myIoSocket
     });
@@ -17,8 +17,8 @@ angular.module('myApp.chat', ['ngRoute', 'ngMaterial'])
     });
   }])
 
-  .controller('ChatCtrl', ['$scope', '$mdSidenav', 'Client', 'LoopBackResource', 'socket', '$http', 'Chatroom', 'Message', '$location',
-    function ($scope, $mdSidenav, Client, LoopBackResource, socket, $http, Chatroom, Message, $location) {
+  .controller('ChatCtrl', ['$scope', '$mdSidenav', 'Client', 'LoopBackResource', 'socket', '$http', 'Chatroom', 'Message', '$location','Emoji',
+    function ($scope, $mdSidenav, Client, LoopBackResource, socket, $http, Chatroom, Message, $location, Emoji) {
 
       var vm = this;
       var originatorEv;
@@ -34,40 +34,115 @@ angular.module('myApp.chat', ['ngRoute', 'ngMaterial'])
       vm.getChat = getChat;
       vm.openMenu = openMenu;
       vm.logout = logout;
-
+      vm.getProfile = getProfile;
+      vm.startnewChat = startnewChat;
+      vm.addfriend = addfriend;
+      vm.deleteChat = deleteChat;
+      vm.createChat = createChat;
       // ******* DATA **********
-      vm.urlBase = LoopBackResource.getUrlBase(); //Gets the host address
-      Client.getCurrent(null, function (res) {
-        vm.current = res;
-        Chatroom.find({
-          "filter": {
-            include: {
-              relation: "client",
-              scope: {
-                where: {
-                  "Client_id": res.id
+
+
+      reload();
+
+      function reload() {
+        Client.getCurrent(null, function (res) {
+          vm.current = res;
+          if(vm.current == null)
+          {
+            $location.path('/login');
+          }
+          Chatroom.find({
+            "filter": {
+              include: {
+                relation: "client",
+                scope: {
+                  where: {
+                    "Client_id": res.id
+                  }
                 }
               }
             }
-          }
-        }, function (res) {
-          vm.chats = res;
+          }, function (res) {
+            vm.chats = res;
+          }, function (err) {
+            console.error(err);
+          });
         }, function (err) {
           console.error(err);
         });
-      }, function (err) {
-        console.error(err);
-      });
 
-      Client.find({
-        filter: {
-          where: {
-            "status": "online"
+        vm.urlBase = LoopBackResource.getUrlBase(); //Gets the host address
+        Client.find({
+          filter: {
+            where: {
+              "status": "online"
+            }
           }
-        }
-      }).$promise.then(function (answer) {
-        vm.contacts = answer;
-      });
+        }).$promise.then(function (answer) {
+          vm.contacts = answer;
+        });
+
+      }
+
+
+
+
+
+      function getProfile(id) {
+        Client.find({
+          filter: {
+            where: {
+              id: id
+            }
+          }
+        }).$promise.then(function (answer) {
+          console.log(answer);
+          vm.profile = answer[0];
+        });
+      }
+
+      function startnewChat(username, userid) {
+        Client.chatrooms.create({
+          id: vm.current.id
+        }, {
+          name: username,
+          type: true
+        }, function (res) {
+          Client.chatrooms.link({
+            id: userid,
+            fk: res.id
+          })
+          reload();
+        }, function (err) {
+          console.error(err);
+        });
+
+
+      }
+
+      function addfriend(userid) {
+
+      }
+
+      function deleteChat(id)
+      {
+        Chatroom.deleteById({id:id});
+        reload();
+      }
+
+      function createChat()
+      {
+        Client.chatrooms.create({
+          id: vm.current.id
+        }, {
+          name: vm.userchat,
+          type: false
+        }, function (res) {
+          reload();
+        }, function (err) {
+          console.error(err);
+        });
+      }
 
 
       function getChat(id) {
@@ -159,6 +234,29 @@ angular.module('myApp.chat', ['ngRoute', 'ngMaterial'])
 
       }
 
+      function getEmoji(message, cb)
+      {
+          var n = vm.message.search(":");
+          if(n > 0){
+          var emoji_name = "";
+          for(var i=1; i < vm.message.length; i++){
+            if(vm.message[i] === ':'){
+              emoji_name += vm.message[n-1];
+              break
+            }
+            emoji_name += vm.message[n+i];
+            }
+            emoji_name = emoji_name.replace(':','');
+            Emoji.find({where:{name: emoji_name}}, function (res) {
+                cb(res);
+            }, function  (err) {
+              console.error(err);
+            });
+
+            console.log(emoji_name);            
+          }       
+      }
+
       function sendMessage() {
         if (!vm.currentChat == 0) {
           //Build The Message
@@ -188,10 +286,14 @@ angular.module('myApp.chat', ['ngRoute', 'ngMaterial'])
       }
 
       function logout() {
-        Client.updateAttributes({id: vm.current.id },{status: "offline"},
+        Client.updateAttributes({
+            id: vm.current.id
+          }, {
+            status: "offline"
+          },
           function (res) {
-              Client.logout();
-              $location.path('/login');
+            Client.logout();
+            $location.path('/login');
           },
           function (err) {
             console.error(err);

@@ -18,18 +18,18 @@
               </md-button>
               <md-menu-content width="4">
                 <md-menu-item>
-                  <md-button ng-click="ctrl.redial($event)">
+                  <md-button ng-click="vm.startnewChat(item.username,item.id)">
                     Iniciar Chat
                   </md-button>
                 </md-menu-item>
                 <md-menu-item>
-                  <md-button ng-click="ctrl.checkVoicemail()">
+                  <md-button ng-click="vm.getProfile(item.id)">
                     Ver Perfil
                   </md-button>
                 </md-menu-item>
                 <md-menu-divider></md-menu-divider>
                 <md-menu-item>
-                  <md-button ng-click="ctrl.toggleNotifications()">
+                  <md-button ng-click="vm.addfriend(item.id)">
                     Agregar Amigo
                   </md-button>
                 </md-menu-item>

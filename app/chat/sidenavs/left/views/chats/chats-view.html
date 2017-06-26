@@ -2,7 +2,6 @@
   <md-content layout="row">
     <md-list flex>
       <md-list-item class="md-3-line" ng-repeat="item in vm.chats" ng-click="vm.getChat(item.id)">
-
         <div layout="row" layout-fill>
           <div flex="66">
             <div class="md-list-item-text" layout="column">
@@ -12,29 +11,9 @@
             </div>
           </div>
           <div flex>
-            <md-menu>
-              <md-button ng-click="vm.openMenu($mdMenu, $event)">
-                Options
-              </md-button>
-              <md-menu-content width="4">
-                <md-menu-item>
-                  <md-button ng-click="ctrl.redial($event)">
-                    Opcion 1
-                  </md-button>
-                </md-menu-item>
-                <md-menu-item>
-                  <md-button ng-click="ctrl.checkVoicemail()">
-                    Opcion 2
-                  </md-button>
-                </md-menu-item>
-                <md-menu-divider></md-menu-divider>
-                <md-menu-item>
-                  <md-button ng-click="ctrl.toggleNotifications()">
-                    Opcion 3
-                  </md-button>
-                </md-menu-item>
-              </md-menu-content>
-            </md-menu>
+            <md-button ng-click="vm.deleteChat(item.id)">
+              Delete
+            </md-button>
           </div>
         </div>
       </md-list-item>
